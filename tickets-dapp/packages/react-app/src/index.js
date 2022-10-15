@@ -1,12 +1,16 @@
 import "./index.css";
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
-import { DAppProvider, Mainnet, Goerli } from "@usedapp/core";
+import { DAppProvider } from "@usedapp/core";
 import React from "react";
 import ReactDOM from "react-dom";
 import { getDefaultProvider } from 'ethers'
 
+
 import App from "./App";
+
+export const getAddressLink = (explorerUrl) => (address) => `${explorerUrl}/address/${address}`
+export const getTransactionLink = (explorerUrl) => (txnId) => `${explorerUrl}/tx/${txnId}`
 
 // IMPORTANT, PLEASE READ
 // To avoid disruptions in your app, change this to your own Infura project id.
@@ -14,11 +18,28 @@ import App from "./App";
 const INFURA_PROJECT_ID = "529670718fd74cd2a041466303daecd7";
 // [Mainnet.chainId]: "https://mainnet.infura.io/v3/" + INFURA_PROJECT_ID,
 
+const arbitrumGoerliExplorerUrl = 'https://goerli-rollup-explorer.arbitrum.io'
+export const ArbitrumGoerli = {
+  chainId: 421613,
+  chainName: 'Arbitrum Goerli',
+  isTestChain: true,
+  isLocalChain: false,
+  multicallAddress: '0x108B25170319f38DbED14cA9716C54E5D1FF4623',
+  rpcUrl: 'https://goerli-rollup.arbitrum.io/rpc',
+  nativeCurrency: {
+    name: 'AGOR',
+    symbol: 'AGOR',
+    decimals: 18,
+  },
+  blockExplorerUrl: arbitrumGoerliExplorerUrl,
+  getExplorerAddressLink: getAddressLink(arbitrumGoerliExplorerUrl),
+  getExplorerTransactionLink: getTransactionLink(arbitrumGoerliExplorerUrl),
+}
+
 const config = {
-  readOnlyChainId: Mainnet.chainId,
+  readOnlyChainId: ArbitrumGoerli.chainId,
   readOnlyUrls: {
-    [Mainnet.chainId]: getDefaultProvider('mainnet'),
-    [Goerli.chainId]: getDefaultProvider('goerli'),
+    [ArbitrumGoerli.chainId]: getDefaultProvider("https://arb-goerli.g.alchemy.com/v2/RMAO-wGMdP6DawJoS_HRV_aj6Su-fqtC")
   },
 }
 
