@@ -5,6 +5,7 @@ pragma solidity >=0.8.4;
 
 import "./IPRBProxy.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 /// @notice Emitted when the caller is not the owner.
 error PRBProxy__ExecutionNotAuthorized(address owner, address caller, address target, bytes4 selector);
@@ -34,14 +35,23 @@ contract PRBProxy is IPRBProxy, ERC721 {
 
     /// INTERNAL STORAGE ///
 
+    using Counters for Counters.Counter;
+
+    Counters.Counter private _tokenIdCounter;
+
     /// @notice Maps envoys to target contracts to function selectors to boolean flags.
     mapping(address => mapping(address => mapping(bytes4 => bool))) internal permissions;
+
+    // Mapping from token ID to canvas Pricelimit
+    mapping(uint256 => uint256) private _limits;
 
     /// CONSTRUCTOR ///
 
     constructor() ERC721("ExpenseToken", "EXPENSE") {
         minGasReserve = 5_000;
         owner = msg.sender;
+        // first call is with id zero as using auto increment
+        _mintSpendooorPass(msg.sender, type(uint256).max);
         emit TransferOwnership(address(0), msg.sender);
     }
 
@@ -49,6 +59,21 @@ contract PRBProxy is IPRBProxy, ERC721 {
 
     /// @dev Called when Ether is sent and the call data is empty.
     receive() external payable {}
+
+    /// INTERNAL FUNCTIONS ///
+
+    // Mint spendooor pass to an address with the given limit
+    function _mintSpendooorPass(address to, uint256 limit) internal returns (uint256) {
+        if (owner != msg.sender) {
+            revert PRBProxy__NotOwner(owner, msg.sender);
+        }
+        uint256 tokenId = _tokenIdCounter.current();
+        _tokenIdCounter.increment();
+        _safeMint(to, tokenId);
+        _limits[tokenId] = limit;
+        return tokenId;
+    }
+
 
     /// PUBLIC CONSTANT FUNCTIONS ///
 
@@ -62,7 +87,23 @@ contract PRBProxy is IPRBProxy, ERC721 {
         return permissions[envoy][target][selector];
     }
 
+    function limitOf(uint256 tokenId) external view returns (uint256) {
+        return _limits[tokenId];
+    }
+
     /// PUBLIC NON-CONSTANT FUNCTIONS ///
+
+    // External facing function for minting spendooor pass to an address with the given limit
+    function mintSpendooorPass(address to, uint256 limit) external returns (uint256) {
+        return _mintSpendooorPass(to, limit);
+    }
+
+    function setLimit(uint256 tokenID, uint256 limit) external {
+        if (owner != msg.sender) {
+            revert PRBProxy__NotOwner(owner, msg.sender);
+        }
+        _limits[tokenID] = limit;
+    }
 
     /// @inheritdoc IPRBProxy
     function execute(address target, bytes calldata data) external payable override returns (bytes memory response) {
