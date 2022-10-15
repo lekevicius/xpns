@@ -4,6 +4,7 @@
 pragma solidity >=0.8.4;
 
 import "./IPRBProxy.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 /// @notice Emitted when the caller is not the owner.
 error PRBProxy__ExecutionNotAuthorized(address owner, address caller, address target, bytes4 selector);
@@ -22,7 +23,7 @@ error PRBProxy__TargetInvalid(address target);
 
 /// @title PRBProxy
 /// @author Paul Razvan Berg
-contract PRBProxy is IPRBProxy {
+contract PRBProxy is IPRBProxy, ERC721 {
     /// PUBLIC STORAGE ///
 
     /// @inheritdoc IPRBProxy
@@ -38,7 +39,7 @@ contract PRBProxy is IPRBProxy {
 
     /// CONSTRUCTOR ///
 
-    constructor() {
+    constructor() ERC721("ExpenseToken", "EXPENSE") {
         minGasReserve = 5_000;
         owner = msg.sender;
         emit TransferOwnership(address(0), msg.sender);
@@ -51,6 +52,7 @@ contract PRBProxy is IPRBProxy {
 
     /// PUBLIC CONSTANT FUNCTIONS ///
 
+    // NOTE: We don't use permissions now, we will check NFT owning and spending limits for now
     /// @inheritdoc IPRBProxy
     function getPermission(
         address envoy,
@@ -86,6 +88,10 @@ contract PRBProxy is IPRBProxy {
 
         // Reserve some gas to ensure that the function has enough to finish the execution.
         uint256 stipend = gasleft() - minGasReserve;
+
+        // Check if caller owns Expense NFT
+
+        // Check if caller does not exceeded spending limit
 
         // Delegate call to the target contract.
         bool success;
