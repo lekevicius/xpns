@@ -5,6 +5,7 @@ pragma solidity >=0.8.4;
 
 import "./IPRBProxy.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 /// @notice Emitted when the caller is not the owner.
@@ -22,9 +23,12 @@ error PRBProxy__OwnerChanged(address originalOwner, address newOwner);
 /// @notice Emitted when passing an EOA or an undeployed contract as the target.
 error PRBProxy__TargetInvalid(address target);
 
+/// @notice Emitted when trying to send a pass when address already has one.
+error PRBProxy__AlreadyOwnPass(address target);
+
 /// @title PRBProxy
 /// @author Paul Razvan Berg
-contract PRBProxy is IPRBProxy, ERC721 {
+contract PRBProxy is IPRBProxy, ERC721, ERC721Enumerable {
     /// PUBLIC STORAGE ///
 
     /// @inheritdoc IPRBProxy
@@ -61,6 +65,30 @@ contract PRBProxy is IPRBProxy, ERC721 {
     receive() external payable {}
 
     /// INTERNAL FUNCTIONS ///
+
+    /// The following functions are overrides required by Solidity.
+
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId)
+        internal
+        override(ERC721, ERC721Enumerable)
+    {
+        // Only allow 1 pass allowed per address
+        if (balanceOf(to) > 0) {
+            revert PRBProxy__AlreadyOwnPass(to);
+        }
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721Enumerable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+
+    /// The previos functions are overrides required by Solidity.
 
     // Mint spendooor pass to an address with the given limit
     function _mintSpendooorPass(address to, uint256 limit) internal returns (uint256) {
