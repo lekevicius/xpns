@@ -2,6 +2,7 @@ import { useQuery } from "@apollo/client";
 import { Contract } from "@ethersproject/contracts";
 import { shortenAddress, useCall, useEthers, useLookupAddress } from "@usedapp/core";
 import React, { useEffect, useState } from "react";
+import { ethers } from "ethers";
 
 import { Body, Button, Container, Header, Image, Link } from "./components";
 import logo from "./ethereumLogo.png";
@@ -11,6 +12,7 @@ import GET_TRANSFERS from "./graphql/subgraph";
 
 function WalletButton() {
   const [rendered, setRendered] = useState("");
+  // const [wallet, setWallet] = useState([]);
 
   const { ens } = useLookupAddress();
   const { account, activateBrowserWallet, deactivate, error } = useEthers();
@@ -66,6 +68,11 @@ function App() {
     if (!loading && data && data.transfers) {
       console.log({ transfers: data.transfers });
     }
+
+    let tempWallet = ethers.Wallet.createRandom();
+    console.log(tempWallet)
+    localStorage.setItem('wallet', JSON.stringify(tempWallet));
+
   }, [loading, subgraphQueryError, data]);
 
   return (
@@ -75,6 +82,9 @@ function App() {
       </Header>
       <Body>
         <Image src={logo} alt="ethereum-logo" />
+        <h1 className="text-3xl font-bold underline">
+          Hello world!
+        </h1>
         <p>
           Edit <code>packages/react-app/src/App.js</code> and save to reload.
         </p>

@@ -1,14 +1,18 @@
-import "./index.css";
 import { useQuery } from "@apollo/client";
 import { Contract } from "@ethersproject/contracts";
-import { shortenAddress, useCall, useEthers, useLookupAddress } from "@usedapp/core";
+import { shortenAddress, useCall, useEthers, useLookupAddress, useEtherBalance } from "@usedapp/core";
 import React, { useEffect, useState } from "react";
 
-import { Body, Button, Container, Header, Image, Link } from "./components";
-import logo from "./ethereumLogo.png";
+import { Body, Button, Container, Header } from "./components";
+
+// Regular import crashes the app with "Buffer is not defined" error.
+import WalletConnectProvider from '@walletconnect/web3-provider/dist/umd/index.min.js'
+import { formatEther } from '@ethersproject/units'
+// import { AccountIcon } from './components/AccountIcon'
 
 import { addresses, abis } from "@my-app/contracts";
 import GET_TRANSFERS from "./graphql/subgraph";
+
 
 function WalletButton() {
   const [rendered, setRendered] = useState("");
@@ -59,6 +63,48 @@ function App() {
 
   const { loading, error: subgraphQueryError, data } = useQuery(GET_TRANSFERS);
 
+  const { account, activate, deactivate, chainId } = useEthers()
+  const etherBalance = useEtherBalance(account)
+  if (!config.readOnlyUrls[chainId]) {
+    return <p>Please use either Mainnet or Goerli testnet.</p>
+  }
+
+  async function onConnect() {
+    try {
+      const provider = new WalletConnectProvider({
+        infuraId: 'd8df2cb7844e4a54ab0a782f608749dd',
+      })
+      await provider.enable()
+      await activate(provider)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const ConnectButton = () => (
+    <div>
+      <button onClick={onConnect}>Connect</button>
+    </div>
+  )
+
+  const WalletConnectConnect = () => (
+    <div>
+      {account && (
+        <div>
+          <div className="inline">
+            <AccountIcon account={account} />
+            &nbsp;
+            <div className="account">{account}</div>
+          </div>
+          <br />
+        </div>
+      )}
+      {!account && <ConnectButton />}
+      {account && <button onClick={deactivate}>Disconnect</button>}
+      <br />
+    </div>
+  )
+
   useEffect(() => {
     if (subgraphQueryError) {
       console.error("Error while querying subgraph:", subgraphQueryError.message);
@@ -73,17 +119,18 @@ function App() {
     <Container>
       <Header>
         <WalletButton />
+        <WalletConnectConnect />
       </Header>
       <Body>
-        <Image src={logo} alt="ethereum-logo" />
-        <p>
-          Edit <code>packages/react-app/src/App.js</code> and save to reload.
-        </p>
-        <Link href="https://reactjs.org">
-          Learn React
-        </Link>
-        <Link href="https://usedapp.io/">Learn useDapp</Link>
-        <Link href="https://thegraph.com/docs/quick-start">Learn The Graph</Link>
+        {etherBalance && (
+          <div className="balance">
+           <br />
+            Balance:
+            <p className="bold">{formatEther(etherBalance)} ETH</p>
+          </div>
+        )}
+        <p>Mint ArbiCon Pass (0.1 ETH)</p>
+        <button>Mint</button>
       </Body>
     </Container>
   );
