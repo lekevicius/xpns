@@ -24,10 +24,10 @@ contract Ticket is ERC721, Ownable {
         _safeMint(to, tokenId);
     }
 
-    function mint() public payable {
+    function mint(address to) public payable {
         require(PRICE_PER_TOKEN <= msg.value, "Ether value sent is not correct");
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
-        _safeMint(msg.sender, tokenId);
+        _safeMint(to, tokenId);
     }
 }
