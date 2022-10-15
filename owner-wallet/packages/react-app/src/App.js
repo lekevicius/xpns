@@ -75,6 +75,9 @@ function App() {
       </Header>
       <Body>
         <Image src={logo} alt="ethereum-logo" />
+        <h1 className="text-3xl font-bold underline">
+          Hello world!
+        </h1>
         <p>
           Edit <code>packages/react-app/src/App.js</code> and save to reload.
         </p>
