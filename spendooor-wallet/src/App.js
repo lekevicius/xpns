@@ -59,13 +59,13 @@ function App() {
     const { value, error } =
       useCall(
         address &&
-          tokenAddress && {
-            contract: new Contract(xpnsContract || addresses.wallet, new utils.Interface(abis.wallet)), // instance of called contract
-            method: "balanceOf", // Method to be called
-            args: [address], // Method arguments - address to be checked for balance
-          }
+        tokenAddress && {
+          contract: new Contract(xpnsContract || addresses.wallet, new utils.Interface(abis.wallet)), // instance of called contract
+          method: "balanceOf", // Method to be called
+          args: [address], // Method arguments - address to be checked for balance
+        }
       ) ?? {};
-    if(error) {
+    if (error) {
       console.error(error.message)
       return undefined
     }
@@ -83,7 +83,7 @@ function App() {
           args: [address, 0], // Method arguments - address to be checked for balance
         }
       ) ?? {};
-    if(error) {
+    if (error) {
       console.error(error.message)
       return undefined
     }
@@ -101,7 +101,7 @@ function App() {
           args: [tokenId], // Method arguments - address to be checked for balance
         }
       ) ?? {};
-    if(error) {
+    if (error) {
       console.error(error.message)
       return undefined
     }
@@ -173,7 +173,7 @@ function App() {
   // const signer = wallet.getSigner(wallet.address);
   const contract = new Contract(walletAddress, walletInterface)
   const { state: execTxState, send: execTx } = useContractFunction(contract, 'execute', { transactionName: 'Execute', privateKey: privateKey, chainId: 421613, gasLimitBufferPercentage: 100, gasLimit: 10000000 })
-  
+
   const executeTransaction = (request) => {
     console.log(request)
     execTx(request.to, request.value, request.data)
@@ -208,6 +208,19 @@ function App() {
     txCall: getTx
   })
 
+  const profile = {
+    fields: {
+      Phone: '(555) 123-4567',
+      Email: 'ricardocooper@example.com',
+      Title: 'Senior Front-End Developer',
+      Team: 'Product Development',
+      Location: 'San Francisco',
+      Sits: 'Oasis, 4th floor',
+      Salary: '$145,000',
+      Birthday: 'June 8, 1990',
+    },
+  }
+
   const contractBalance = useEtherBalance(addresses.wallet)
 
   const passBalance = useTokenBalance(addresses.wallet, addr)
@@ -235,32 +248,162 @@ function App() {
   // }, [loading, subgraphQueryError, data]);
 
   return (
-    <div>
-      <div>
-        <input placeholder="New Private Key" value={privInput} onChange={e => setPrivInput(e.target.value)} type="text" />
-        <button onClick={onSavePrivInput}>Save New Private Key</button>
-      </div>
-      <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
-      <h3>{addr}</h3>
-      <div>
-        <input placeholder="Smart Contract Address" value={contractInput} onChange={e => setContractInput(e.target.value)} type="text" />
-        <button onClick={onSaveContractInput}>Save Contract Address</button>
-      </div>
-      <h3>{xpnsContract} { contractBalance && (<a>{ethers.utils.formatEther(contractBalance)} ETH</a>) }</h3>
-      <div>
-        <input placeholder="Wallet Connect URL" value={wcInput} onChange={e => setWcInput(e.target.value)} type="text" />
-        <button onClick={onWCConnect}>Connect with WalletConnect</button>
-      </div>
+    <section>
+
       {passBalance && passBalance == 1 && (
-        <div>
-          <div>Pass: {passBalance && passBalance.toNumber()}</div>
-          <div>Token ID: {tokenId && tokenId.toNumber()}</div>
-          <div>Spendable: {spendableValue && ethers.utils.formatEther(spendableValue)} ETH</div>
+        <div className="mx-auto max-w-3xl sm:px-6 lg:px-8 text-left mt-6">
+          <section aria-labelledby="payment-details-heading">
+            <div className="shadow sm:overflow-hidden sm:rounded-md">
+              <div className="bg-white py-6 px-4 sm:p-6">
+
+                <div className="mx-auto mb-6 max-w-5xl">
+                  <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-3">
+                    {contractBalance &&
+                      <div className="sm:col-span-1">
+                        <dt className="text-base font-medium text-gray-500">Contract Balance</dt>
+                        <dd className="mt-1 text-base text-gray-900">{ethers.utils.formatEther(contractBalance)} ETH</dd>
+                      </div>
+                    }
+
+                    {spendableValue &&
+                      <div className="sm:col-span-1">
+                        <dt className="text-base font-medium text-gray-500">Spendable</dt>
+                        <dd className="mt-1 text-base text-gray-900">{ethers.utils.formatEther(spendableValue)} ETH</dd>
+                      </div>
+                    }
+
+                    {tokenId &&
+                      <div className="sm:col-span-1">
+                        <dt className="text-base font-medium text-gray-500">Token ID</dt>
+                        <dd className="mt-1 text-base text-gray-900">#{tokenId.toNumber()}</dd>
+                      </div>
+                    }
+
+                  </dl>
+                </div>
+
+                <div className="space-y-1 mb-2">
+                  <label htmlFor="add-team-members" className="block text-sm font-medium text-gray-700">
+                    Connect to a Dapp
+                  </label>
+                  <div className="">
+                    <div className="flex-grow">
+                      <input
+                        type="text"
+                        name="add-team-members"
+                        id="add-team-members"
+                        value={wcInput} onChange={e => setWcInput(e.target.value)}
+                        className="block p-2 text-lg w-full rounded-md border-gray-300 border shadow-sm focus:border-sky-500 focus:ring-sky-500"
+                        placeholder="Wallet Connect URL"
+                      />
+                    </div>
+                    <div className="mt-3">
+                      <button
+                        type="button"
+                        className="block w-full mb-2 items-center rounded-md border border-indigo-300 bg-indigo-600 px-4 py-2 text-lg font-bold text-white  focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                        onClick={onWCConnect}
+                      >
+                        <span>Connect with WalletConnect</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+
+
+
+              </div>
+            </div>
+
+          </section>
         </div>
       )}
-    </div>
+
+
+      <div className="mx-auto max-w-3xl sm:px-6 lg:px-8 text-left my-6">
+        <section aria-labelledby="payment-details-heading">
+          <div className="shadow sm:overflow-hidden sm:rounded-md">
+            <div className="bg-white py-6 px-4 sm:p-6">
+
+              <div className="border-gray-200 px-4 py-5 sm:p-0">
+                <dl className="sm:divide-y sm:divide-gray-200">
+
+                  <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                    <dt className="text-sm font-medium text-gray-500">Signer Address</dt>
+                    <dd className="mt-1 text-sm font-mono text-gray-900 sm:col-span-2 sm:mt-0">{addr}</dd>
+                  </div>
+
+                  <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                    <dt className="text-sm font-medium text-gray-500 pt-2">Update Private Key</dt>
+                    <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+
+                      <div className="flex">
+                        <div className="flex-grow">
+                          <input
+                            type="text"
+                            name="add-team-members"
+                            id="add-team-members"
+                            value={privInput} onChange={e => setPrivInput(e.target.value)}
+                            className="block p-2 w-full rounded-md border-gray-300 border shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
+                            placeholder="New Private Key"
+                          />
+                        </div>
+                        <span className="ml-3">
+                          <button
+                            type="button"
+                            className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                            onClick={onSavePrivInput}
+                          >
+                            <span>Save</span>
+                          </button>
+                        </span>
+                      </div>
+
+                    </dd>
+                  </div>
+
+
+                  <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                    <dt className="text-sm font-medium text-gray-500">Contract Address</dt>
+                    <dd className="mt-1 text-sm font-mono text-gray-900 sm:col-span-2 sm:mt-0">{xpnsContract}</dd>
+                  </div>
+
+                  <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                    <dt className="text-sm font-medium text-gray-500 pt-2">Update Contract Address</dt>
+                    <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+
+                      <div className="flex">
+                        <div className="flex-grow">
+                          <input
+                            type="text"
+                            name="add-team-members"
+                            id="add-team-members"
+                            value={contractInput} onChange={e => setContractInput(e.target.value)}
+                            className="block p-2 w-full rounded-md border-gray-300 border shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
+                            placeholder="New Smart Contract Address"
+                          />
+                        </div>
+                        <span className="ml-3">
+                          <button
+                            type="button"
+                            className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                            onClick={onSaveContractInput}
+                          >
+                            <span>Save</span>
+                          </button>
+                        </span>
+                      </div>
+
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+          </div>
+
+        </section>
+      </div>
+    </section>
   );
 }
 
