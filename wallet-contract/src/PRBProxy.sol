@@ -101,9 +101,6 @@ contract PRBProxy is IPRBProxy, ERC721, ERC721Enumerable {
 
     // Mint spendooor pass to an address with the given limit
     function _mintSpendooorPass(address to, uint256 limit) internal returns (uint256) {
-        if (owner != msg.sender) {
-            revert PRBProxy__NotOwner(owner, msg.sender);
-        }
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
@@ -140,11 +137,14 @@ contract PRBProxy is IPRBProxy, ERC721, ERC721Enumerable {
 
     // External facing function for minting spendooor pass to an address with the given limit
     function mintSpendooorPass(address to, uint256 limit) external returns (uint256) {
-        return _mintSpendooorPass(to, limit);
+        if (ownerOf(0) != msg.sender) {
+            revert PRBProxy__NotOwner(owner, msg.sender);
+        }
+        return _mintSpendooorPass(to, limit);        
     }
 
     function setLimit(uint256 tokenID, uint256 limit) external {
-        if (owner != msg.sender) {
+        if (ownerOf(0) != msg.sender) {
             revert PRBProxy__NotOwner(owner, msg.sender);
         }
         _limits[tokenID] = limit;
@@ -224,7 +224,7 @@ contract PRBProxy is IPRBProxy, ERC721, ERC721Enumerable {
         bytes4 selector,
         bool permission
     ) external override {
-        if (owner != msg.sender) {
+        if (ownerOf(0) != msg.sender) {
             revert PRBProxy__NotOwner(owner, msg.sender);
         }
         permissions[envoy][target][selector] = permission;
@@ -232,11 +232,11 @@ contract PRBProxy is IPRBProxy, ERC721, ERC721Enumerable {
 
     /// @inheritdoc IPRBProxy
     function transferOwnership(address newOwner) external override {
-        address oldOwner = owner;
-        if (oldOwner != msg.sender) {
-            revert PRBProxy__NotOwner(oldOwner, msg.sender);
-        }
-        owner = newOwner;
-        emit TransferOwnership(oldOwner, newOwner);
+        // address oldOwner = owner;
+        // if (oldOwner != msg.sender) {
+        //     revert PRBProxy__NotOwner(oldOwner, msg.sender);
+        // }
+        // owner = newOwner;
+        // emit TransferOwnership(oldOwner, newOwner);
     }
 }
