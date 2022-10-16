@@ -23,7 +23,7 @@ export const ArbitrumGoerli = {
   isTestChain: true,
   isLocalChain: false,
   multicallAddress: '0x108B25170319f38DbED14cA9716C54E5D1FF4623',
-  rpcUrl: 'https://goerli-rollup.arbitrum.io/rpc',
+  rpcUrl: 'https://nameless-misty-haze.arbitrum-goerli.discover.quiknode.pro/47bb4f76fd2a08b0a125da7808efc52b45cf77fd/',
   nativeCurrency: {
     name: 'AGOR',
     symbol: 'AGOR',
@@ -37,7 +37,7 @@ export const ArbitrumGoerli = {
 const config = {
   readOnlyChainId: ArbitrumGoerli.chainId,
   readOnlyUrls: {
-    [ArbitrumGoerli.chainId]: getDefaultProvider("https://arb-goerli.g.alchemy.com/v2/RMAO-wGMdP6DawJoS_HRV_aj6Su-fqtC")
+    [ArbitrumGoerli.chainId]: getDefaultProvider("https://nameless-misty-haze.arbitrum-goerli.discover.quiknode.pro/47bb4f76fd2a08b0a125da7808efc52b45cf77fd/")
   },
   gasLimitBufferPercentage: 100
 }
