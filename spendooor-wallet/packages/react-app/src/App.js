@@ -7,67 +7,61 @@ import { Body, Button, Container, Header } from "./components";
 import useLocalStorage from 'react-use-localstorage';
 import { Wallet } from "ethers"
 
+import useWalletConnect from "./useWalletConnect"
+
 // import { addresses, abis } from "@my-app/contracts";
 
-function WalletButton() {
-  const [rendered, setRendered] = useState("");
+// function WalletButton() {
+//   const [rendered, setRendered] = useState("");
 
-  const { ens } = useLookupAddress();
-  const { account, activateBrowserWallet, deactivate, error } = useEthers();
+//   const { ens } = useLookupAddress();
+//   const { account, activateBrowserWallet, deactivate, error } = useEthers();
 
-  useEffect(() => {
-    if (ens) {
-      setRendered(ens);
-    } else if (account) {
-      setRendered(shortenAddress(account));
-    } else {
-      setRendered("");
-    }
-  }, [account, ens, setRendered]);
+//   useEffect(() => {
+//     if (ens) {
+//       setRendered(ens);
+//     } else if (account) {
+//       setRendered(shortenAddress(account));
+//     } else {
+//       setRendered("");
+//     }
+//   }, [account, ens, setRendered]);
 
-  useEffect(() => {
-    if (error) {
-      console.error("Error while connecting wallet:", error.message);
-    }
-  }, [error]);
+//   useEffect(() => {
+//     if (error) {
+//       console.error("Error while connecting wallet:", error.message);
+//     }
+//   }, [error]);
 
-  return (
-    <Button
-      onClick={() => {
-        if (!account) {
-          activateBrowserWallet();
-        } else {
-          deactivate();
-        }
-      }}
-    >
-      {rendered === "" && "Connect Wallet"}
-      {rendered !== "" && rendered}
-    </Button>
-  );
-}
+//   return (
+//     <Button
+//       onClick={() => {
+//         if (!account) {
+//           activateBrowserWallet();
+//         } else {
+//           deactivate();
+//         }
+//       }}
+//     >
+//       {rendered === "" && "Connect Wallet"}
+//       {rendered !== "" && rendered}
+//     </Button>
+//   );
+// }
 
 function App() {
 
   /*
   TODOS:
 
-  - Find simple useLocalStorage
-  - Check if wallet is already here
-  - If not, generate and save
-  - display public address
-  - allow entering public / private key to override
-  
-  - allow entering sc address
-  - save to localstorage
-  
-  - Setup ethers provider with wallet info
-  - Adjust config to point to ArbitrumGoerli
-
   - paste WalletConnect and save connection
   - get dispatch events
   - send mint tx from tickets frontend
   - receive tx and do something with it
+  
+  - Setup ethers provider with wallet info
+  - Adjust config to point to ArbitrumGoerli
+
   */
 
   const [xpnsPriv, setXpnsPriv] = useLocalStorage('xpns_priv');
@@ -81,12 +75,39 @@ function App() {
   } else {
     privateKey = xpnsPriv
   }
+
   const wallet = new Wallet(privateKey);
   const [addr, setAddr] = useState(wallet.address)
+
+
+  const [privInput, setPrivInput] = useState("");
+  const onSavePrivInput = () => {
+    setXpnsPriv(privInput)
+    setPrivInput("")
+    const wallet = new Wallet(privInput);
+    setAddr(wallet.address);
+  }
 
   const [contractInput, setContractInput] = useState("");
   const onSaveContractInput = () => {
     setXpnsContract(contractInput)
+  }
+
+  const { connections, requests, resolveMany, connect, disconnect, isConnecting } = useWalletConnect({
+    account: wallet.address,
+    chainId: 421613,
+    initialUri: "",
+    allNetworks: "",
+    setNetwork: "",
+    useStorage: useState
+  })
+
+  console.log(connections, requests, isConnecting)
+
+  const [wcInput, setWcInput] = useState("");
+  const onWCConnect = () => {
+    console.log(wcInput)
+    connect({ uri: wcInput })
   }
 
 
@@ -112,19 +133,20 @@ function App() {
 
   return (
     <Container>
-      <Header>
-        <WalletButton />
-      </Header>
       <Body>
+        <div>
+          <input placeholder="New Private Key" value={privInput} onChange={e => setPrivInput(e.target.value)} type="text" />
+          <button onClick={onSavePrivInput}>Save New Private Key</button>
+        </div>
         <h3>{addr}</h3>
         <div>
-          <input value={contractInput} onChange={e => setContractInput(e.target.value)} type="text" />
+          <input placeholder="Smart Contract Address" value={contractInput} onChange={e => setContractInput(e.target.value)} type="text" />
           <button onClick={onSaveContractInput}>Save Contract Address</button>
         </div>
         <h3>{xpnsContract}</h3>
         <div>
-          <input placeholder="Wallet Connect URL" type="text" />
-          <button>Connect with WalletConnect</button>
+          <input placeholder="Wallet Connect URL" value={wcInput} onChange={e => setWcInput(e.target.value)} type="text" />
+          <button onClick={onWCConnect}>Connect with WalletConnect</button>
         </div>
       </Body>
     </Container>

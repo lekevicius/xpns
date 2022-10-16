@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
-import { isFirefox } from 'lib/isFirefox'
 
 import WalletConnectCore from '@walletconnect/core'
 import * as cryptoLib from '@walletconnect/iso-crypto'
 
 const noop = () => null
 const noopSessionStorage = { setSession: noop, getSession: noop, removeSession: noop }
+
+export function isFirefox() {
+    return typeof (navigator) !== 'undefined' && navigator.userAgent.toLowerCase().includes('firefox')
+}
 
 const STORAGE_KEY = 'wc1_state'
 const SUPPORTED_METHODS = ['eth_sendTransaction', 'gs_multi_send', 'personal_sign', 'eth_sign', 'eth_signTypedData_v4', 'eth_signTypedData', 'wallet_switchEthereumChain']
@@ -294,16 +297,16 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 }
                 txn = signPayload
                 // Dealing with Erc20 Permits
-                if (signPayload.primaryType === 'Permit') {
-                    // If Uniswap, reject the permit and expect a graceful fallback (receiving approve eth_sendTransaction afterwards)
-                    if (UNISWAP_PERMIT_EXCEPTIONS.some(ex => dappName.toLowerCase().includes(ex.toLowerCase()))) {
-                        connector.rejectRequest({ id: payload.id, error: { message: 'Method not found: ' + payload.method, code: -32601 }})
-                        return
-                    } else {
-                        addToast(`dApp tried to sign a token permit which does not support Smart Wallets`, { error: true })
-                        return
-                    }
-                }
+                // if (signPayload.primaryType === 'Permit') {
+                //     // If Uniswap, reject the permit and expect a graceful fallback (receiving approve eth_sendTransaction afterwards)
+                //     if (UNISWAP_PERMIT_EXCEPTIONS.some(ex => dappName.toLowerCase().includes(ex.toLowerCase()))) {
+                //         connector.rejectRequest({ id: payload.id, error: { message: 'Method not found: ' + payload.method, code: -32601 }})
+                //         return
+                //     } else {
+                //         addToast(`dApp tried to sign a token permit which does not support Smart Wallets`, { error: true })
+                //         return
+                //     }
+                // }
             }
             if (payload.method === 'gs_multi_send' || payload.method === 'ambire_sendBatchTransaction') {
                 dispatch({ type: 'batchRequestsAdded', batchRequest: {
@@ -343,6 +346,17 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 connector.rejectRequest({ id: payload.id, error: { message: 'Sent a request for the wrong account' }})
                 return
             }
+
+            console.log({
+                id: payload.id,
+                type: payload.method,
+                wcUri: connectorOpts.uri,
+                txn,
+                chainId: connector.session.chainId,
+                account: connector.session.accounts[0],
+                notification: true
+            })
+
             dispatch({ type: 'requestAdded', request: {
                 id: payload.id,
                 type: payload.method,
