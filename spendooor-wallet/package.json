@@ -30,6 +30,7 @@
     "ethers": "^5.7.0",
     "graphql": "^16.3.0",
     "ipfs-deploy": "^11.2.0",
+    "netlify-cli": "^12.0.9",
     "process": "^0.11.10",
     "react": "17.0.2",
     "react-app-rewired": "^2.2.1",
@@ -46,7 +47,7 @@
     ]
   },
   "scripts": {
-    "build": "react-scripts build",
+    "build": "GENERATE_SOURCEMAP=false react-app-rewired  build",
     "eject": "react-scripts eject",
     "ipfs": "yarn build && ipfs-deploy build/",
     "start": "GENERATE_SOURCEMAP=false react-app-rewired start",
