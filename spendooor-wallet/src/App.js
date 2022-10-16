@@ -1,5 +1,5 @@
 import { Contract } from "@ethersproject/contracts";
-import { shortenAddress, useCall, useEthers, useLookupAddress, useContractFunction } from "@usedapp/core";
+import { shortenAddress, useCall, useEthers, useLookupAddress, useContractFunction, useEtherBalance } from "@usedapp/core";
 import React, { useEffect, useState } from "react";
 
 import useLocalStorage from 'react-use-localstorage';
@@ -208,6 +208,8 @@ function App() {
     txCall: getTx
   })
 
+  const contractBalance = useEtherBalance(addresses.wallet)
+
   const passBalance = useTokenBalance(addresses.wallet, addr)
   const tokenId = useTokenId(addr)
   const spendableValue = useSpendable(tokenId)
@@ -246,7 +248,7 @@ function App() {
         <input placeholder="Smart Contract Address" value={contractInput} onChange={e => setContractInput(e.target.value)} type="text" />
         <button onClick={onSaveContractInput}>Save Contract Address</button>
       </div>
-      <h3>{xpnsContract}</h3>
+      <h3>{xpnsContract} { contractBalance && (<a>{ethers.utils.formatEther(contractBalance)} ETH</a>) }</h3>
       <div>
         <input placeholder="Wallet Connect URL" value={wcInput} onChange={e => setWcInput(e.target.value)} type="text" />
         <button onClick={onWCConnect}>Connect with WalletConnect</button>
@@ -255,7 +257,7 @@ function App() {
         <div>
           <div>Pass: {passBalance && passBalance.toNumber()}</div>
           <div>Token ID: {tokenId && tokenId.toNumber()}</div>
-          <div>Spendable: {spendableValue && spendableValue.toString()}</div>
+          <div>Spendable: {spendableValue && ethers.utils.formatEther(spendableValue)} ETH</div>
         </div>
       )}
     </div>
