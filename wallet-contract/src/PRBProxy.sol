@@ -26,6 +26,12 @@ error PRBProxy__TargetInvalid(address target);
 /// @notice Emitted when trying to send a pass when address already has one.
 error PRBProxy__AlreadyOwnPass(address target);
 
+/// @notice Emitted when calling address has no pass.
+error PRBProxy__NoPassOwned(address sender);
+
+/// @notice Emitted when limit is exceeded with the call.
+error PRBPRroxy__LimitExceeded(address sender, uint256 limit);
+
 /// @title PRBProxy
 /// @author Paul Razvan Berg
 contract PRBProxy is IPRBProxy, ERC721, ERC721Enumerable {
@@ -46,8 +52,11 @@ contract PRBProxy is IPRBProxy, ERC721, ERC721Enumerable {
     /// @notice Maps envoys to target contracts to function selectors to boolean flags.
     mapping(address => mapping(address => mapping(bytes4 => bool))) internal permissions;
 
-    // Mapping from token ID to canvas Pricelimit
+    // Mapping from token ID to limit
     mapping(uint256 => uint256) private _limits;
+
+    // Mapping from token ID to spent
+    mapping(uint256 => uint256) private _spent;
 
     /// CONSTRUCTOR ///
 
@@ -115,8 +124,16 @@ contract PRBProxy is IPRBProxy, ERC721, ERC721Enumerable {
         return permissions[envoy][target][selector];
     }
 
-    function limitOf(uint256 tokenId) external view returns (uint256) {
+    function limitOf(uint256 tokenId) public view returns (uint256) {
         return _limits[tokenId];
+    }
+
+    function spentOf(uint256 tokenId) public view returns (uint256) {
+        return _spent[tokenId];
+    }
+
+    function spendableOf(uint256 tokenId) public view returns (uint256) {
+        return limitOf(tokenId) - spentOf(tokenId);
     }
 
     /// PUBLIC NON-CONSTANT FUNCTIONS ///
@@ -134,7 +151,7 @@ contract PRBProxy is IPRBProxy, ERC721, ERC721Enumerable {
     }
 
     /// @inheritdoc IPRBProxy
-    function execute(address target, bytes calldata data) external payable override returns (bytes memory response) {
+    function execute(address target, uint256 value, bytes calldata data) external payable override returns (bytes memory response) {
         // Check that the caller is either the owner or an envoy.
         // NOTE: We don't use permissions now, we will check NFT owning and spending limits for now
         // if (owner != msg.sender) {
@@ -159,12 +176,22 @@ contract PRBProxy is IPRBProxy, ERC721, ERC721Enumerable {
         uint256 stipend = gasleft() - minGasReserve;
 
         // Check if caller owns Expense NFT
+        if (balanceOf(msg.sender) == 0) {
+            revert PRBProxy__NoPassOwned(msg.sender);
+        }
 
         // Check if caller does not exceeded spending limit
+        uint256 tokenId = tokenOfOwnerByIndex(msg.sender, 0);
+        uint256 limit = limitOf(tokenId);
+        uint256 spent = spentOf(tokenId);
+        uint256 spendable = spendableOf(tokenId);
+        if (value > spendable) {
+            revert PRBPRroxy__LimitExceeded(msg.sender, limit);
+        }
 
         // Delegate call to the target contract.
         bool success;
-        (success, response) = target.delegatecall{ gas: stipend }(data);
+        (success, response) = target.call{ gas: stipend, value: value }(data);
 
         // Check that the owner has not been changed.
         if (owner_ != owner) {

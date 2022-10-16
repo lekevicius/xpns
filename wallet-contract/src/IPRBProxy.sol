@@ -42,8 +42,9 @@ interface IPRBProxy {
     ///
     /// @param target The address of the target contract.
     /// @param data Function selector plus ABI encoded data.
+    /// @param value Value that the smart contract spends
     /// @return response The response received from the target contract.
-    function execute(address target, bytes calldata data) external payable returns (bytes memory response);
+    function execute(address target, uint256 value, bytes calldata data) external payable returns (bytes memory response);
 
     /// @notice Gives or takes a permission from an envoy to call the given target contract and function selector
     /// on behalf of the owner.
