@@ -10,6 +10,7 @@ import { Wallet, utils, getDefaultProvider, ethers } from "ethers"
 import useWalletConnect from "./useWalletConnect"
 
 import { addresses, abis } from "./contract";
+import './index.css'
 
 // import { addresses, abis } from "@my-app/contracts";
 
@@ -174,6 +175,9 @@ function App() {
           <input placeholder="New Private Key" value={privInput} onChange={e => setPrivInput(e.target.value)} type="text" />
           <button onClick={onSavePrivInput}>Save New Private Key</button>
         </div>
+        <h1 className="text-3xl font-bold underline">
+          Hello world!
+        </h1>
         <h3>{addr}</h3>
         <div>
           <input placeholder="Smart Contract Address" value={contractInput} onChange={e => setContractInput(e.target.value)} type="text" />
