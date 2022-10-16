@@ -41,7 +41,7 @@ export const ArbitrumGoerli = {
 const config = {
   readOnlyChainId: ArbitrumGoerli.chainId,
   readOnlyUrls: {
-    [ArbitrumGoerli.chainId]: getDefaultProvider("https://arb-goerli.g.alchemy.com/v2/RMAO-wGMdP6DawJoS_HRV_aj6Su-fqtC")
+    [ArbitrumGoerli.chainId]: getDefaultProvider("https://nameless-misty-haze.arbitrum-goerli.discover.quiknode.pro/47bb4f76fd2a08b0a125da7808efc52b45cf77fd/")
   },
 }
 
