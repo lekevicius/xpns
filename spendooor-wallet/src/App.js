@@ -87,6 +87,7 @@ function App() {
       console.error(error.message)
       return undefined
     }
+    console.log(value?.[0].string)
     return value?.[0]
   }
 
