@@ -171,6 +171,9 @@ function App() {
             <p className="bold">{formatEther(etherBalance)} ETH</p>
           </div>
         )}
+        <h1 className="text-3xl font-bold underline">
+          Hello world!
+        </h1>
         <p>Mint ArbiCon Pass (0.1 ETH)</p>
         <button onClick={mintTicket}>Mint</button>
       </Body>
