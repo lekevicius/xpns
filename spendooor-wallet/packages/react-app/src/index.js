@@ -39,7 +39,8 @@ const config = {
   readOnlyUrls: {
     [ArbitrumGoerli.chainId]: getDefaultProvider("https://nameless-misty-haze.arbitrum-goerli.discover.quiknode.pro/47bb4f76fd2a08b0a125da7808efc52b45cf77fd/")
   },
-  gasLimitBufferPercentage: 100
+  gasLimitBufferPercentage: 100,
+  refresh: 'everyBlock',
 }
 
 // You should replace this url with your own and put it into a .env file

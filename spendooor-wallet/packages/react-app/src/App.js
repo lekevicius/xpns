@@ -1,5 +1,5 @@
 import { Contract } from "@ethersproject/contracts";
-import { shortenAddress, useCall, useEthers, useLookupAddress, useContractFunction } from "@usedapp/core";
+import { shortenAddress, useCall, useEthers, useLookupAddress, useContractFunction, useTokenBalance } from "@usedapp/core";
 import React, { useEffect, useState } from "react";
 
 import { Body, Button, Container, Header } from "./components";
@@ -115,15 +115,22 @@ function App() {
   // console.log(account)
 
   const walletInterface = new utils.Interface(abis.wallet)
-  const walletAddress = xpnsContract
+  const walletAddress = xpnsContract || addresses.wallet
   // const signer = wallet.getSigner(wallet.address);
   const contract = new Contract(walletAddress, walletInterface)
-
   const { state: execTxState, send: execTx } = useContractFunction(contract, 'execute', { transactionName: 'Execute', privateKey: privateKey, chainId: 421613, gasLimitBufferPercentage: 100, gasLimit: 10000000 })
-
+  
   const executeTransaction = (request) => {
     console.log(request)
     execTx(request.to, request.value, request.data)
+  }
+
+  const { state: spendableState, send: spendableTx } = useContractFunction(contract, 'spendableOf', { transactionName: 'get spendabe', privateKey: privateKey, chainId: 421613, gasLimitBufferPercentage: 100, gasLimit: 10000000 })
+
+  const [spendable, setSpendable] = useState(0);
+  const onCheckSpendable = (tokenId) => {
+    spendableTx(tokenId)
+    console.log(spendableState)
   }
 
   // data: "0x6a627842000000000000000000000000167acb75baacea65e895ae1ffbd1ed4b787547cf"
@@ -146,6 +153,8 @@ function App() {
     useStorage: useState,
     txCall: getTx
   })
+
+  const passBalance = useTokenBalance(addr, addresses.wallet)
 
 
   // Read more about useDapp on https://usedapp.io/
@@ -188,6 +197,7 @@ function App() {
           <input placeholder="Wallet Connect URL" value={wcInput} onChange={e => setWcInput(e.target.value)} type="text" />
           <button onClick={onWCConnect}>Connect with WalletConnect</button>
         </div>
+        <div>{passBalance}</div>
       </Body>
     </Container>
   );
