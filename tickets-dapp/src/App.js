@@ -165,7 +165,7 @@ function App() {
       )}
 
       <section aria-labelledby="payment-details-heading text-left">
-        <form action="#" method="POST">
+        {/* <form action="#" method="POST"> */}
           <div className="shadow sm:overflow-hidden sm:rounded-md">
             <div className="bg-white py-6 px-4 sm:p-6">
             <h2 className="text-3xl font-bold mb-4">Mint ArbiCon Pass <span className="text-slate">(0.1 ETH)</span></h2>
@@ -173,7 +173,7 @@ function App() {
 
             </div>
           </div>
-        </form>
+        {/* </form> */}
       </section>
     </div>
   );
