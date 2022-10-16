@@ -5,8 +5,6 @@ import { getDefaultProvider } from 'ethers'
 import { utils } from 'ethers'
 import { Contract } from '@ethersproject/contracts'
 
-import { Body, Button, Container, Header } from "./components";
-
 // Regular import crashes the app with "Buffer is not defined" error.
 import WalletConnectProvider from '@walletconnect/web3-provider/dist/umd/index.min.js'
 import { formatEther } from '@ethersproject/units'
@@ -158,26 +156,23 @@ function App() {
   // }, [loading, subgraphQueryError, data]);
 
   return (
-    <Container>
-      <Header>
-        {/* <WalletButton /> */}
-        <WalletConnectConnect />
-      </Header>
-      <Body>
-        {etherBalance && (
-          <div className="balance">
-           <br />
-            Balance:
-            <p className="bold">{formatEther(etherBalance)} ETH</p>
-          </div>
-        )}
-        <h1 className="text-3xl font-bold underline">
-          Hello world!
-        </h1>
-        <p>Mint ArbiCon Pass (0.1 ETH)</p>
-        <button onClick={mintTicket}>Mint</button>
-      </Body>
-    </Container>
+    <div>
+      {/* <WalletButton /> */}
+      <WalletConnectConnect />
+
+      {etherBalance && (
+        <div className="balance">
+          <br />
+          Balance:
+          <p className="bold">{formatEther(etherBalance)} ETH</p>
+        </div>
+      )}
+      <h1 className="text-3xl font-bold underline">
+        Hello world!
+      </h1>
+      <p>Mint ArbiCon Pass (0.1 ETH)</p>
+      <button onClick={mintTicket}>Mint</button>
+    </div>
   );
 }
 

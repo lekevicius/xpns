@@ -2,8 +2,6 @@ import { Contract } from "@ethersproject/contracts";
 import { shortenAddress, useCall, useEthers, useLookupAddress, useContractFunction, useSendTransaction } from "@usedapp/core";
 import React, { useEffect, useState } from "react";
 
-import { Body, Button, Container, Header } from "./components";
-
 import useLocalStorage from 'react-use-localstorage';
 import { Wallet, utils, getDefaultProvider, ethers } from "ethers"
 
@@ -192,30 +190,28 @@ function App() {
   // }, [loading, subgraphQueryError, data]);
 
   return (
-    <Container>
-      <Body>
-        <div>
-          <input placeholder="New Private Key" value={privInput} onChange={e => setPrivInput(e.target.value)} type="text" />
-          <button onClick={onSavePrivInput}>Save New Private Key</button>
-        </div>
-        <h3>{addr}</h3>
-        <div>
-          <input placeholder="Smart Contract Address" value={contractInput} onChange={e => setContractInput(e.target.value)} type="text" />
-          <button onClick={onSaveContractInput}>Save Contract Address</button>
-        </div>
-        <h3>{xpnsContract}</h3>
-        <div>
-          <input placeholder="Receiver address" value={mintPassTargetInput} onChange={e => setMintPassTargetInput(e.target.value)} type="text" />
-          <input placeholder="Limit in ether" value={mintPassLimitInput} onChange={e => setMintPassLimitInput(e.target.value)} type="number" />
-          <button onClick={onMintPassInput}>Mint pass</button>
-        </div>
-        <div>
-          <input placeholder="Toke id" value={changeLimitTargetInput} onChange={e => setChangeLimitTargetInput(e.target.value)} type="number" />
-          <input placeholder="Limit in ether" value={changeLimitLimitInput} onChange={e => setChangeLimitLimitInput(e.target.value)} type="number" />
-          <button onClick={onChangeLimitInput}>Set Limit</button>
-        </div>
-      </Body>
-    </Container>
+    <div>
+      <div>
+        <input placeholder="New Private Key" value={privInput} onChange={e => setPrivInput(e.target.value)} type="text" />
+        <button onClick={onSavePrivInput}>Save New Private Key</button>
+      </div>
+      <h3>{addr}</h3>
+      <div>
+        <input placeholder="Smart Contract Address" value={contractInput} onChange={e => setContractInput(e.target.value)} type="text" />
+        <button onClick={onSaveContractInput}>Save Contract Address</button>
+      </div>
+      <h3>{xpnsContract}</h3>
+      <div>
+        <input placeholder="Receiver address" value={mintPassTargetInput} onChange={e => setMintPassTargetInput(e.target.value)} type="text" />
+        <input placeholder="Limit in ether" value={mintPassLimitInput} onChange={e => setMintPassLimitInput(e.target.value)} type="number" />
+        <button onClick={onMintPassInput}>Mint pass</button>
+      </div>
+      <div>
+        <input placeholder="Toke id" value={changeLimitTargetInput} onChange={e => setChangeLimitTargetInput(e.target.value)} type="number" />
+        <input placeholder="Limit in ether" value={changeLimitLimitInput} onChange={e => setChangeLimitLimitInput(e.target.value)} type="number" />
+        <button onClick={onChangeLimitInput}>Set Limit</button>
+      </div>
+    </div>
   );
 }
 
