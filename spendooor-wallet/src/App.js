@@ -1,5 +1,5 @@
 import { Contract } from "@ethersproject/contracts";
-import { shortenAddress, useCall, useEthers, useLookupAddress, useContractFunction, useTokenBalance } from "@usedapp/core";
+import { shortenAddress, useCall, useEthers, useLookupAddress, useContractFunction } from "@usedapp/core";
 import React, { useEffect, useState } from "react";
 
 import { Body, Button, Container, Header } from "./components";
@@ -53,6 +53,28 @@ import './index.css'
 // }
 
 function App() {
+
+  function useTokenBalance(
+    tokenAddress,
+    address
+  ) {
+    console.log(tokenAddress)
+    console.log(address)
+    const { value, error } =
+      useCall(
+        address &&
+          tokenAddress && {
+            contract: new Contract(xpnsContract || addresses.wallet, new utils.Interface(abis.wallet)), // instance of called contract
+            method: "balanceOf", // Method to be called
+            args: [address], // Method arguments - address to be checked for balance
+          }
+      ) ?? {};
+    if(error) {
+      console.error(error.message)
+      return undefined
+    }
+    return value?.[0]
+  }
 
   /*
   TODOS:
@@ -154,8 +176,7 @@ function App() {
     txCall: getTx
   })
 
-  const passBalance = useTokenBalance(addr, addresses.wallet)
-
+  const passBalance = useTokenBalance(addresses.wallet, addr)
 
   // Read more about useDapp on https://usedapp.io/
   // const { error: contractCallError, value: tokenBalance } =
@@ -197,7 +218,7 @@ function App() {
           <input placeholder="Wallet Connect URL" value={wcInput} onChange={e => setWcInput(e.target.value)} type="text" />
           <button onClick={onWCConnect}>Connect with WalletConnect</button>
         </div>
-        <div>{passBalance}</div>
+        <div>Pass: {passBalance && JSON.stringify(passBalance)}</div>
       </Body>
     </Container>
   );
