@@ -1,6 +1,9 @@
-import { shortenAddress, useEthers, useLookupAddress, useEtherBalance } from "@usedapp/core";
+import { shortenAddress, useEthers, useContractFunction, useEtherBalance } from "@usedapp/core";
 import React, { useEffect, useState } from "react";
 import { getDefaultProvider } from 'ethers'
+
+import { utils } from 'ethers'
+import { Contract } from '@ethersproject/contracts'
 
 import { Body, Button, Container, Header } from "./components";
 
@@ -9,7 +12,8 @@ import WalletConnectProvider from '@walletconnect/web3-provider/dist/umd/index.m
 import { formatEther } from '@ethersproject/units'
 // import { AccountIcon } from './components/AccountIcon'
 
-import { addresses, abis } from "./contracts";
+import { addresses } from "./contracts";
+import TicketABI from './contracts/abis/Ticket.json'
 
 export const getAddressLink = (explorerUrl) => (address) => `${explorerUrl}/address/${address}`
 export const getTransactionLink = (explorerUrl) => (txnId) => `${explorerUrl}/tx/${txnId}`
@@ -83,19 +87,37 @@ function App() {
   // const { loading, error: subgraphQueryError, data } = useQuery(GET_TRANSFERS);
 
   const { account, activate, deactivate, chainId } = useEthers()
+  
+  localStorage.setItem("walletconnect", undefined)
+
+  const ticketInterface = new utils.Interface(TicketABI)
+  const ticketAddress = addresses.Ticket
+  const contract = new Contract(ticketAddress, ticketInterface)
+
   const etherBalance = useEtherBalance(account)
-  console.log(chainId, config)
-  if (!config.readOnlyUrls[chainId]) {
-    return <p>Please use either Mainnet or Goerli testnet.</p>
+
+  const { state: mintState, send: sendMint } = useContractFunction(contract, 'mint', { transactionName: 'Mint' })
+
+  const mintTicket = () => {
+    console.log(account)
+    sendMint(account, { value: utils.parseEther("0.1") })
   }
+
+  // if (!config.readOnlyUrls[chainId]) {
+  //   return <p>Please use either Arbitrum Goerli Testnet.</p>
+  // }
 
   async function onConnect() {
     try {
       const provider = new WalletConnectProvider({
-        infuraId: 'd8df2cb7844e4a54ab0a782f608749dd',
+        // infuraId: 'd8df2cb7844e4a54ab0a782f608749dd',
+        rpc: {
+          421613: "https://arb-goerli.g.alchemy.com/v2/RMAO-wGMdP6DawJoS_HRV_aj6Su-fqtC",
+        }
       })
       await provider.enable()
       await activate(provider)
+      console.log(account)
     } catch (error) {
       console.error(error)
     }
@@ -150,7 +172,7 @@ function App() {
           </div>
         )}
         <p>Mint ArbiCon Pass (0.1 ETH)</p>
-        <button>Mint</button>
+        <button onClick={mintTicket}>Mint</button>
       </Body>
     </Container>
   );

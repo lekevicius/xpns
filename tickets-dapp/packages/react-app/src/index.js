@@ -9,14 +9,16 @@ import { getDefaultProvider } from 'ethers'
 
 import App from "./App";
 
-export const getAddressLink = (explorerUrl) => (address) => `${explorerUrl}/address/${address}`
-export const getTransactionLink = (explorerUrl) => (txnId) => `${explorerUrl}/tx/${txnId}`
+
 
 // IMPORTANT, PLEASE READ
 // To avoid disruptions in your app, change this to your own Infura project id.
 // https://infura.io/register
 const INFURA_PROJECT_ID = "529670718fd74cd2a041466303daecd7";
 // [Mainnet.chainId]: "https://mainnet.infura.io/v3/" + INFURA_PROJECT_ID,
+
+export const getAddressLink = (explorerUrl) => (address) => `${explorerUrl}/address/${address}`
+export const getTransactionLink = (explorerUrl) => (txnId) => `${explorerUrl}/tx/${txnId}`
 
 const arbitrumGoerliExplorerUrl = 'https://goerli-rollup-explorer.arbitrum.io'
 export const ArbitrumGoerli = {
