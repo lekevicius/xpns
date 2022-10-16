@@ -38,7 +38,7 @@ const checkIsOffline = uri => {
     //    .every(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
 }
 
-export default function useWalletConnect ({ account, chainId, initialUri, allNetworks, setNetwork, useStorage }) {
+export default function useWalletConnect ({ account, chainId, initialUri, allNetworks, setNetwork, useStorage, txCall }) {
     const addToast = (text) => alert(text)
 
     // This is needed cause of the WalletConnect event handlers
@@ -347,15 +347,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 return
             }
 
-            console.log({
-                id: payload.id,
-                type: payload.method,
-                wcUri: connectorOpts.uri,
-                txn,
-                chainId: connector.session.chainId,
-                account: connector.session.accounts[0],
-                notification: true
-            })
+            txCall(txn)
 
             dispatch({ type: 'requestAdded', request: {
                 id: payload.id,

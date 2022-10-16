@@ -39,6 +39,7 @@ const config = {
   readOnlyUrls: {
     [ArbitrumGoerli.chainId]: getDefaultProvider("https://arb-goerli.g.alchemy.com/v2/RMAO-wGMdP6DawJoS_HRV_aj6Su-fqtC")
   },
+  gasLimitBufferPercentage: 100
 }
 
 // You should replace this url with your own and put it into a .env file
