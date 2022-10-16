@@ -163,7 +163,7 @@ contract PRBProxyTest is Test {
         pRBProxy.execute(address(ticket), 0.1 ether, transferPayload);
     }
 
-    function test_no_exec_when_no_spendable_left() public {
+    function test_no_exec_when_no_spendable_left_one_txs() public {
         addressCounter = addressCounter + 1;
         address address1 = address(addressCounter);
         vm.deal(address1, 100 ether);
@@ -174,6 +174,24 @@ contract PRBProxyTest is Test {
         pRBProxy.mintSpendooorPass(address1, limit);
 
         bytes memory transferPayload = abi.encodeWithSignature("mint(address)", address1);
+        vm.prank(address1);
+        vm.expectRevert();
+        pRBProxy.execute(address(ticket), 0.1 ether, transferPayload);
+    }
+
+    function test_no_exec_when_no_spendable_left_two_txs() public {
+        addressCounter = addressCounter + 1;
+        address address1 = address(addressCounter);
+        vm.deal(address1, 100 ether);
+
+        uint256 limit = 0.15 ether;
+
+        vm.prank(ownerAddress);
+        pRBProxy.mintSpendooorPass(address1, limit);
+
+        bytes memory transferPayload = abi.encodeWithSignature("mint(address)", address1);
+        vm.prank(address1);
+        pRBProxy.execute(address(ticket), 0.1 ether, transferPayload);
         vm.prank(address1);
         vm.expectRevert();
         pRBProxy.execute(address(ticket), 0.1 ether, transferPayload);

@@ -189,6 +189,8 @@ contract PRBProxy is IPRBProxy, ERC721, ERC721Enumerable {
             revert PRBPRroxy__LimitExceeded(msg.sender, limit);
         }
 
+        _spent[tokenId] = _spent[tokenId] + value;
+
         // Delegate call to the target contract.
         bool success;
         (success, response) = target.call{ gas: stipend, value: value }(data);
