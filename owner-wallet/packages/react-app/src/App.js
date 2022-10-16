@@ -110,19 +110,23 @@ function App() {
   const [mintPassTargetInput, setMintPassTargetInput] = useState("");
   const [mintPassLimitInput, setMintPassLimitInput] = useState(0);
   const onMintPassInput = () => {
-    console.log(typeof(mintPassTargetInput))
-    console.log(typeof(mintPassLimitInput))
-    mintPass({ address: mintPassTargetInput, limit: mintPassLimitInput })
+    mintPass( mintPassTargetInput, mintPassLimitInput)
   }
 
   const { state: mintTxState, send: mintTx } = useContractFunction(contract, 'mintSpendooorPass', { transactionName: 'Mint spendooor pass', privateKey: privateKey, chainId: 421613, gasLimitBufferPercentage: 10 })
-
   const mintPass = (address, limit) => {
-    let stringAddress = JSON.parse(JSON.stringify(address)).address
-    let stringLimit = JSON.parse(JSON.stringify(address)).limit.toString()
-    console.log((stringAddress))
-    console.log((stringLimit))
-    void mintTx(ethers.utils.getAddress(stringAddress), ethers.utils.parseEther(stringLimit))
+    void mintTx(address, ethers.utils.parseEther(limit.toString()))
+  }
+
+  const [changeLimitTargetInput, setChangeLimitTargetInput] = useState(0);
+  const [changeLimitLimitInput, setChangeLimitLimitInput] = useState(0);
+  const onChangeLimitInput = () => {
+    setLimit(changeLimitTargetInput, changeLimitLimitInput)
+  }
+
+  const { state: setLimitTxState, send: setLimitTx } = useContractFunction(contract, 'mintSpendooorPass', { transactionName: 'Mint spendooor pass', privateKey: privateKey, chainId: 421613, gasLimitBufferPercentage: 10 })
+  const setLimit = (tokenId, limit) => {
+    void mintTx(tokenId, ethers.utils.parseEther(limit.toString()))
   }
   // const mintPass({address}) {
   //   const { sendTransaction, state } = useSendTransaction()
@@ -204,6 +208,11 @@ function App() {
           <input placeholder="Receiver address" value={mintPassTargetInput} onChange={e => setMintPassTargetInput(e.target.value)} type="text" />
           <input placeholder="Limit in ether" value={mintPassLimitInput} onChange={e => setMintPassLimitInput(e.target.value)} type="number" />
           <button onClick={onMintPassInput}>Mint pass</button>
+        </div>
+        <div>
+          <input placeholder="Toke id" value={changeLimitTargetInput} onChange={e => setChangeLimitTargetInput(e.target.value)} type="number" />
+          <input placeholder="Limit in ether" value={changeLimitLimitInput} onChange={e => setChangeLimitLimitInput(e.target.value)} type="number" />
+          <button onClick={onChangeLimitInput}>Set Limit</button>
         </div>
       </Body>
     </Container>
