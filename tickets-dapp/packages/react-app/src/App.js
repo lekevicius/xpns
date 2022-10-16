@@ -112,7 +112,7 @@ function App() {
       const provider = new WalletConnectProvider({
         // infuraId: 'd8df2cb7844e4a54ab0a782f608749dd',
         rpc: {
-          421613: "https://arb-goerli.g.alchemy.com/v2/RMAO-wGMdP6DawJoS_HRV_aj6Su-fqtC",
+          421613: "https://nameless-misty-haze.arbitrum-goerli.discover.quiknode.pro/47bb4f76fd2a08b0a125da7808efc52b45cf77fd/",
         }
       })
       await provider.enable()
