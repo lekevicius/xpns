@@ -107,18 +107,22 @@ function App() {
   const walletAddress = addresses.wallet
   const contract = new Contract(walletAddress, walletInterface)
 
-  const [mintPassInput, setMintPassInput] = useState("");
+  const [mintPassTargetInput, setMintPassTargetInput] = useState("");
+  const [mintPassLimitInput, setMintPassLimitInput] = useState(0);
   const onMintPassInput = () => {
-    console.log(mintPassInput)
-    mintPass({ address: mintPassInput })
+    console.log(typeof(mintPassTargetInput))
+    console.log(typeof(mintPassLimitInput))
+    mintPass({ address: mintPassTargetInput, limit: mintPassLimitInput })
   }
 
   const { state: mintTxState, send: mintTx } = useContractFunction(contract, 'mintSpendooorPass', { transactionName: 'Mint spendooor pass', privateKey: privateKey, chainId: 421613, gasLimitBufferPercentage: 10 })
 
-  const mintPass = (address) => {
-    console.log(typeof(address))
+  const mintPass = (address, limit) => {
     let stringAddress = JSON.parse(JSON.stringify(address)).address
-    void mintTx(ethers.utils.getAddress(stringAddress), ethers.utils.parseEther("1"))
+    let stringLimit = JSON.parse(JSON.stringify(address)).limit.toString()
+    console.log((stringAddress))
+    console.log((stringLimit))
+    void mintTx(ethers.utils.getAddress(stringAddress), ethers.utils.parseEther(stringLimit))
   }
   // const mintPass({address}) {
   //   const { sendTransaction, state } = useSendTransaction()
@@ -197,7 +201,8 @@ function App() {
         </div>
         <h3>{xpnsContract}</h3>
         <div>
-          <input placeholder="Receiver address" value={mintPassInput} onChange={e => setMintPassInput(e.target.value)} type="text" />
+          <input placeholder="Receiver address" value={mintPassTargetInput} onChange={e => setMintPassTargetInput(e.target.value)} type="text" />
+          <input placeholder="Limit in ether" value={mintPassLimitInput} onChange={e => setMintPassLimitInput(e.target.value)} type="number" />
           <button onClick={onMintPassInput}>Mint pass</button>
         </div>
       </Body>
