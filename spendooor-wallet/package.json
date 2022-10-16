@@ -30,11 +30,14 @@
     "ethers": "^5.7.0",
     "graphql": "^16.3.0",
     "ipfs-deploy": "^11.2.0",
+    "process": "^0.11.10",
     "react": "17.0.2",
+    "react-app-rewired": "^2.2.1",
     "react-dom": "17.0.2",
     "react-scripts": "5.0.1",
     "react-use-localstorage": "^3.5.3",
-    "styled-components": "^5.3.3"
+    "styled-components": "^5.3.3",
+    "util": "^0.12.4"
   },
   "eslintConfig": {
     "extends": [
@@ -46,7 +49,7 @@
     "build": "react-scripts build",
     "eject": "react-scripts eject",
     "ipfs": "yarn build && ipfs-deploy build/",
-    "start": "react-scripts start",
+    "start": "GENERATE_SOURCEMAP=false react-app-rewired start",
     "test": "react-scripts test"
   },
   "devDependencies": {

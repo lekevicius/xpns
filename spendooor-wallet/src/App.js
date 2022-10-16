@@ -2,8 +2,6 @@ import { Contract } from "@ethersproject/contracts";
 import { shortenAddress, useCall, useEthers, useLookupAddress, useContractFunction } from "@usedapp/core";
 import React, { useEffect, useState } from "react";
 
-import { Body, Button, Container, Header } from "./components";
-
 import useLocalStorage from 'react-use-localstorage';
 import { Wallet, utils, getDefaultProvider, ethers } from "ethers"
 
@@ -199,28 +197,26 @@ function App() {
   // }, [loading, subgraphQueryError, data]);
 
   return (
-    <Container>
-      <Body>
-        <div>
-          <input placeholder="New Private Key" value={privInput} onChange={e => setPrivInput(e.target.value)} type="text" />
-          <button onClick={onSavePrivInput}>Save New Private Key</button>
-        </div>
-        <h1 className="text-3xl font-bold underline">
-          Hello world!
-        </h1>
-        <h3>{addr}</h3>
-        <div>
-          <input placeholder="Smart Contract Address" value={contractInput} onChange={e => setContractInput(e.target.value)} type="text" />
-          <button onClick={onSaveContractInput}>Save Contract Address</button>
-        </div>
-        <h3>{xpnsContract}</h3>
-        <div>
-          <input placeholder="Wallet Connect URL" value={wcInput} onChange={e => setWcInput(e.target.value)} type="text" />
-          <button onClick={onWCConnect}>Connect with WalletConnect</button>
-        </div>
-        <div>Pass: {passBalance && JSON.stringify(passBalance)}</div>
-      </Body>
-    </Container>
+    <div>
+      <div>
+        <input placeholder="New Private Key" value={privInput} onChange={e => setPrivInput(e.target.value)} type="text" />
+        <button onClick={onSavePrivInput}>Save New Private Key</button>
+      </div>
+      <h1 className="text-3xl font-bold underline">
+        Hello world!
+      </h1>
+      <h3>{addr}</h3>
+      <div>
+        <input placeholder="Smart Contract Address" value={contractInput} onChange={e => setContractInput(e.target.value)} type="text" />
+        <button onClick={onSaveContractInput}>Save Contract Address</button>
+      </div>
+      <h3>{xpnsContract}</h3>
+      <div>
+        <input placeholder="Wallet Connect URL" value={wcInput} onChange={e => setWcInput(e.target.value)} type="text" />
+        <button onClick={onWCConnect}>Connect with WalletConnect</button>
+      </div>
+      <div>Pass: {passBalance && JSON.stringify(passBalance)}</div>
+    </div>
   );
 }
 
