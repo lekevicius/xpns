@@ -39,6 +39,9 @@ const config = {
   readOnlyUrls: {
     [ArbitrumGoerli.chainId]: getDefaultProvider("https://nameless-misty-haze.arbitrum-goerli.discover.quiknode.pro/47bb4f76fd2a08b0a125da7808efc52b45cf77fd/")
   },
+  multicallAddresses: {
+    421613: "0x108B25170319f38DbED14cA9716C54E5D1FF4623",
+  },
   gasLimitBufferPercentage: 100
 }
 

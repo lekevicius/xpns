@@ -51,6 +51,25 @@ import { addresses, abis } from "./contract";
 
 function App() {
 
+  function useTokenId(
+    address
+  ) {
+    const { value, error } =
+      useCall(
+        address && {
+          contract: new Contract(xpnsContract || addresses.wallet, new utils.Interface(abis.wallet)), // instance of called contract
+          method: "tokenOfOwnerByIndex", // Method to be called
+          args: [address, 0], // Method arguments - address to be checked for balance
+        }
+      ) ?? {};
+    if (error) {
+      console.error(error.message)
+      return undefined
+    }
+    console.log(value?.[0].string)
+    return value?.[0]
+  }
+
   /*
   TODOS:
 
@@ -189,29 +208,212 @@ function App() {
   //   }
   // }, [loading, subgraphQueryError, data]);
 
+  const tokenId = useTokenId(addr)
+
   return (
-    <div>
-      <div>
-        <input placeholder="New Private Key" value={privInput} onChange={e => setPrivInput(e.target.value)} type="text" />
-        <button onClick={onSavePrivInput}>Save New Private Key</button>
+    <section>
+      {tokenId && tokenId.toNumber() == 0 && (
+        <div className="mx-auto max-w-3xl sm:px-6 lg:px-8 text-left my-6">
+          <section aria-labelledby="payment-details-heading">
+            <div className="shadow sm:overflow-hidden sm:rounded-md">
+              <div className="bg-white py-6 px-4 sm:p-6">
+
+                <div className="border-gray-200 px-4 py-5 sm:p-0">
+                  <dl className="sm:divide-y sm:divide-gray-200">
+
+                    <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                      <dt className="text-sm font-medium text-gray-500 pt-2">Mint pass</dt>
+                      <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+
+                        <div className="flex">
+                          <div className="flex-grow">
+                            <input
+                              type="text"
+                              name="mint-pass-address"
+                              id="mint-pass-address"
+                              onChange={e => setMintPassTargetInput(e.target.value)}
+                              className="block p-2 w-full rounded-md border-gray-300 border shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
+                              placeholder="Wallet address"
+                            />
+                          </div>
+                          <div className="flex-grow">
+                            <input
+                              type="number"
+                              name="mint-pass-limit"
+                              id="mint-pass-limit"
+                              value={mintPassLimitInput} onChange={e => setMintPassLimitInput(e.target.value)}
+                              className="block p-2 w-full rounded-md border-gray-300 border shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
+                              placeholder="Limit"
+                            />
+                          </div>
+                          <span className="ml-3">
+                            <button
+                              type="button"
+                              className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                              onClick={onMintPassInput}
+                            >
+                              <span>Mint</span>
+                            </button>
+                          </span>
+                        </div>
+
+                      </dd>
+                    </div>
+
+
+                    <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                      <dt className="text-sm font-medium text-gray-500 pt-2">Change Limit</dt>
+                      <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+
+                        <div className="flex">
+                          <div className="flex-grow">
+                            <input
+                              type="number"
+                              name="change-limit-token"
+                              id="change-limit-token"
+                              value={changeLimitTargetInput} onChange={e => setChangeLimitTargetInput(e.target.value)}
+                              className="block p-2 w-full rounded-md border-gray-300 border shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
+                              placeholder="Token ID"
+                            />
+                          </div>
+                          <div className="flex-grow">
+                            <input
+                              type="number"
+                              name="change-limit-limit"
+                              id="change-limit-limit"
+                              value={changeLimitLimitInput} onChange={e => setChangeLimitLimitInput(e.target.value)}
+                              className="block p-2 w-full rounded-md border-gray-300 border shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
+                              placeholder="Limit"
+                            />
+                          </div>
+                          <span className="ml-3">
+                            <button
+                              type="button"
+                              className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                              onClick={onChangeLimitInput}
+                            >
+                              <span>Save</span>
+                            </button>
+                          </span>
+                        </div>
+
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            </div>
+
+          </section>
+        </div>
+      )}
+
+      <div className="mx-auto max-w-3xl sm:px-6 lg:px-8 text-left my-6">
+        <section aria-labelledby="payment-details-heading">
+          <div className="shadow sm:overflow-hidden sm:rounded-md">
+            <div className="bg-white py-6 px-4 sm:p-6">
+
+              <div className="border-gray-200 px-4 py-5 sm:p-0">
+                <dl className="sm:divide-y sm:divide-gray-200">
+
+                  <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                    <dt className="text-sm font-medium text-gray-500">Signer Address</dt>
+                    <dd className="mt-1 text-sm font-mono text-gray-900 sm:col-span-2 sm:mt-0">{addr}</dd>
+                  </div>
+
+                  <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                    <dt className="text-sm font-medium text-gray-500 pt-2">Update Private Key</dt>
+                    <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+
+                      <div className="flex">
+                        <div className="flex-grow">
+                          <input
+                            type="text"
+                            name="add-team-members"
+                            id="add-team-members"
+                            value={privInput} onChange={e => setPrivInput(e.target.value)}
+                            className="block p-2 w-full rounded-md border-gray-300 border shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
+                            placeholder="New Private Key"
+                          />
+                        </div>
+                        <span className="ml-3">
+                          <button
+                            type="button"
+                            className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                            onClick={onSavePrivInput}
+                          >
+                            <span>Save</span>
+                          </button>
+                        </span>
+                      </div>
+
+                    </dd>
+                  </div>
+
+
+                  <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                    <dt className="text-sm font-medium text-gray-500">Contract Address</dt>
+                    <dd className="mt-1 text-sm font-mono text-gray-900 sm:col-span-2 sm:mt-0">{xpnsContract}</dd>
+                  </div>
+
+                  <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+                    <dt className="text-sm font-medium text-gray-500 pt-2">Update Contract Address</dt>
+                    <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+
+                      <div className="flex">
+                        <div className="flex-grow">
+                          <input
+                            type="text"
+                            name="add-team-members"
+                            id="add-team-members"
+                            value={contractInput} onChange={e => setContractInput(e.target.value)}
+                            className="block p-2 w-full rounded-md border-gray-300 border shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
+                            placeholder="New Smart Contract Address"
+                          />
+                        </div>
+                        <span className="ml-3">
+                          <button
+                            type="button"
+                            className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                            onClick={onSaveContractInput}
+                          >
+                            <span>Save</span>
+                          </button>
+                        </span>
+                      </div>
+
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+          </div>
+
+        </section>
       </div>
-      <h3>{addr}</h3>
-      <div>
-        <input placeholder="Smart Contract Address" value={contractInput} onChange={e => setContractInput(e.target.value)} type="text" />
-        <button onClick={onSaveContractInput}>Save Contract Address</button>
-      </div>
-      <h3>{xpnsContract}</h3>
-      <div>
-        <input placeholder="Receiver address" value={mintPassTargetInput} onChange={e => setMintPassTargetInput(e.target.value)} type="text" />
-        <input placeholder="Limit in ether" value={mintPassLimitInput} onChange={e => setMintPassLimitInput(e.target.value)} type="number" />
-        <button onClick={onMintPassInput}>Mint pass</button>
-      </div>
-      <div>
-        <input placeholder="Toke id" value={changeLimitTargetInput} onChange={e => setChangeLimitTargetInput(e.target.value)} type="number" />
-        <input placeholder="Limit in ether" value={changeLimitLimitInput} onChange={e => setChangeLimitLimitInput(e.target.value)} type="number" />
-        <button onClick={onChangeLimitInput}>Set Limit</button>
-      </div>
-    </div>
+    </section>
+    // <div>
+    //   <div>
+    //     <input placeholder="New Private Key" value={privInput} onChange={e => setPrivInput(e.target.value)} type="text" />
+    //     <button onClick={onSavePrivInput}>Save New Private Key</button>
+    //   </div>
+    //   <h3>{addr}</h3>
+    //   <div>
+    //     <input placeholder="Smart Contract Address" value={contractInput} onChange={e => setContractInput(e.target.value)} type="text" />
+    //     <button onClick={onSaveContractInput}>Save Contract Address</button>
+    //   </div>
+    //   <h3>{xpnsContract}</h3>
+    //   <div>
+    //     <input placeholder="Receiver address" value={mintPassTargetInput} onChange={e => setMintPassTargetInput(e.target.value)} type="text" />
+    //     <input placeholder="Limit in ether" value={mintPassLimitInput} onChange={e => setMintPassLimitInput(e.target.value)} type="number" />
+    //     <button onClick={onMintPassInput}>Mint pass</button>
+    //   </div>
+    //   <div>
+    //     <input placeholder="Toke id" value={changeLimitTargetInput} onChange={e => setChangeLimitTargetInput(e.target.value)} type="number" />
+    //     <input placeholder="Limit in ether" value={changeLimitLimitInput} onChange={e => setChangeLimitLimitInput(e.target.value)} type="number" />
+    //     <button onClick={onChangeLimitInput}>Set Limit</button>
+    //   </div>
+    // </div>
   );
 }
 
