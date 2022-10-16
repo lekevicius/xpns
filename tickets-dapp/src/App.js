@@ -122,8 +122,8 @@ function App() {
   }
 
   const ConnectButton = () => (
-    <div>
-      <button onClick={onConnect}>Connect</button>
+    <div className="text-right">
+      <button className="mt-4 inline-flex items-center rounded-md border border-transparent bg-slate-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2" onClick={onConnect}>Connect</button>
     </div>
   )
 
@@ -131,16 +131,12 @@ function App() {
     <div>
       {account && (
         <div>
-          <div className="inline">
-            {/* <AccountIcon account={account} /> */}
-            &nbsp;
             <div className="account">{account}</div>
-          </div>
           <br />
         </div>
       )}
       {!account && <ConnectButton />}
-      {account && <button onClick={deactivate}>Disconnect</button>}
+      {account && <button className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" onClick={deactivate}>Disconnect</button>}
       <br />
     </div>
   )
@@ -156,7 +152,7 @@ function App() {
   // }, [loading, subgraphQueryError, data]);
 
   return (
-    <div>
+    <div className="mx-auto max-w-3xl sm:px-6 lg:px-8">
       {/* <WalletButton /> */}
       <WalletConnectConnect />
 
@@ -167,11 +163,18 @@ function App() {
           <p className="bold">{formatEther(etherBalance)} ETH</p>
         </div>
       )}
-      <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
-      <p>Mint ArbiCon Pass (0.1 ETH)</p>
-      <button onClick={mintTicket}>Mint</button>
+
+      <section aria-labelledby="payment-details-heading text-left">
+        <form action="#" method="POST">
+          <div className="shadow sm:overflow-hidden sm:rounded-md">
+            <div className="bg-white py-6 px-4 sm:p-6">
+            <h2 className="text-3xl font-bold mb-4">Mint ArbiCon Pass <span className="text-slate">(0.1 ETH)</span></h2>
+            <button className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" onClick={mintTicket}>Mint</button>
+
+            </div>
+          </div>
+        </form>
+      </section>
     </div>
   );
 }
