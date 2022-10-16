@@ -56,8 +56,6 @@ function App() {
     tokenAddress,
     address
   ) {
-    console.log(tokenAddress)
-    console.log(address)
     const { value, error } =
       useCall(
         address &&
@@ -66,6 +64,42 @@ function App() {
             method: "balanceOf", // Method to be called
             args: [address], // Method arguments - address to be checked for balance
           }
+      ) ?? {};
+    if(error) {
+      console.error(error.message)
+      return undefined
+    }
+    return value?.[0]
+  }
+
+  function useTokenId(
+    address
+  ) {
+    const { value, error } =
+      useCall(
+        address && {
+          contract: new Contract(xpnsContract || addresses.wallet, new utils.Interface(abis.wallet)), // instance of called contract
+          method: "tokenOfOwnerByIndex", // Method to be called
+          args: [address, 0], // Method arguments - address to be checked for balance
+        }
+      ) ?? {};
+    if(error) {
+      console.error(error.message)
+      return undefined
+    }
+    return value?.[0]
+  }
+
+  function useSpendable(
+    tokenId
+  ) {
+    const { value, error } =
+      useCall(
+        tokenId && {
+          contract: new Contract(xpnsContract || addresses.wallet, new utils.Interface(abis.wallet)), // instance of called contract
+          method: "spendableOf", // Method to be called
+          args: [tokenId], // Method arguments - address to be checked for balance
+        }
       ) ?? {};
     if(error) {
       console.error(error.message)
@@ -175,6 +209,8 @@ function App() {
   })
 
   const passBalance = useTokenBalance(addresses.wallet, addr)
+  const tokenId = useTokenId(addr)
+  const spendableValue = useSpendable(tokenId)
 
   // Read more about useDapp on https://usedapp.io/
   // const { error: contractCallError, value: tokenBalance } =
@@ -215,7 +251,13 @@ function App() {
         <input placeholder="Wallet Connect URL" value={wcInput} onChange={e => setWcInput(e.target.value)} type="text" />
         <button onClick={onWCConnect}>Connect with WalletConnect</button>
       </div>
-      <div>Pass: {passBalance && JSON.stringify(passBalance)}</div>
+      {passBalance && passBalance == 1 && (
+        <div>
+          <div>Pass: {passBalance && passBalance.toNumber()}</div>
+          <div>Token ID: {tokenId && tokenId.toNumber()}</div>
+          <div>Spendable: {spendableValue && spendableValue.toString()}</div>
+        </div>
+      )}
     </div>
   );
 }
