@@ -124,9 +124,9 @@ function App() {
     setLimit(changeLimitTargetInput, changeLimitLimitInput)
   }
 
-  const { state: setLimitTxState, send: setLimitTx } = useContractFunction(contract, 'mintSpendooorPass', { transactionName: 'Mint spendooor pass', privateKey: privateKey, chainId: 421613, gasLimitBufferPercentage: 10 })
+  const { state: setLimitTxState, send: setLimitTx } = useContractFunction(contract, 'setLimit', { transactionName: 'Set limit of token', privateKey: privateKey, chainId: 421613, gasLimitBufferPercentage: 10 })
   const setLimit = (tokenId, limit) => {
-    void mintTx(tokenId, ethers.utils.parseEther(limit.toString()))
+    void setLimitTx(tokenId, ethers.utils.parseEther(limit.toString()))
   }
   // const mintPass({address}) {
   //   const { sendTransaction, state } = useSendTransaction()
