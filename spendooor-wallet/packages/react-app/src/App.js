@@ -114,7 +114,7 @@ function App() {
   // console.log(account)
 
   const walletInterface = new utils.Interface(abis.wallet)
-  const walletAddress = addresses.wallet
+  const walletAddress = xpnsContract
   // const signer = wallet.getSigner(wallet.address);
   const contract = new Contract(walletAddress, walletInterface)
 
